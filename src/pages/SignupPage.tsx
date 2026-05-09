@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Zap, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import {  Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { signup } from "../api/auth";
 import Logo from '../components/Logo';
 import { signupSchema } from '../validators/auth.validator';

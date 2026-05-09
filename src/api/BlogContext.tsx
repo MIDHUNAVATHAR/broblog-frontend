@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState} from 'react';
 
 interface BlogContextType {
   blogs: any[];
@@ -9,7 +9,7 @@ interface BlogContextType {
 
 const BlogContext = createContext<BlogContextType | undefined>(undefined);
 
-export const BlogProvider = ({ children }: { children: ReactNode }) => {
+export const BlogProvider = ({ children }: { children: React.ReactNode }) => {
   const [blogs, setBlogs] = useState<any[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 

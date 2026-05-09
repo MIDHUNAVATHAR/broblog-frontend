@@ -3,12 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Plus, 
-  LogOut, 
-  User, 
   Image as ImageIcon, 
   X, 
   Loader2, 
-  PenTool,
   BookOpen,
   RotateCw,
   Clock,
@@ -171,11 +168,7 @@ const HomePage = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
+
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans">

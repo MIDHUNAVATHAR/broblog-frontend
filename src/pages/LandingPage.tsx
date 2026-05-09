@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, BookOpen, PenTool, TrendingUp, Users, Zap } from 'lucide-react';
+import { ArrowRight, BookOpen, TrendingUp, Users, Zap } from 'lucide-react';
 import api from '../api/axios';
 import Logo from '../components/Logo';
 

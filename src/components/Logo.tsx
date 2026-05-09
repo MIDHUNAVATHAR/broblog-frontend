@@ -1,4 +1,3 @@
-import React from 'react';
 
 const Logo = ({ className = "w-8 h-8", textColor = "text-slate-900" }: { className?: string; textColor?: string }) => {
   return (
