@@ -117,14 +117,10 @@ const LoginPage = () => {
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1">
                 <label htmlFor="password" className="block text-sm font-semibold text-slate-700">
                   Password
                 </label>
-                <Link to="/forgot-password" className="text-xs font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
-                  Forgot password?
-                </Link>
-              </div>
+
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-slate-400" />

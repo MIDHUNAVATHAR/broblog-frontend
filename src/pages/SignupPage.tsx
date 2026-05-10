@@ -47,7 +47,7 @@ const SignupPage = () => {
     setError(null);
     try {
       await signup(formData);
-      navigate(`/verify-otp?email=${encodeURIComponent(formData.email)}`);
+      navigate('/login', { state: { message: 'Account created successfully! Please sign in.' } });
     } catch (err: any) {
       setError(err.response?.data?.message || 'Something went wrong. Please try again.');
     } finally {
