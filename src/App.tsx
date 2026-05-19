@@ -5,7 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import BlogDetailPage from "./pages/BlogDetailPage";
 import MyPostsPage from "./pages/MyPostsPage";
-import { BlogProvider } from "./api/BlogContext";
+import { BlogProvider } from "./context/BlogContext";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('accessToken');
@@ -21,29 +21,29 @@ const App = () => {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
 
-          <Route 
-            path="/home" 
+          <Route
+            path="/home"
             element={
               <PrivateRoute>
                 <HomePage />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/blog/:id" 
+          <Route
+            path="/blog/:id"
             element={
               <PrivateRoute>
                 <BlogDetailPage />
               </PrivateRoute>
-            } 
+            }
           />
-          <Route 
-            path="/my-posts" 
+          <Route
+            path="/my-posts"
             element={
               <PrivateRoute>
                 <MyPostsPage />
               </PrivateRoute>
-            } 
+            }
           />
         </Routes>
       </Router>

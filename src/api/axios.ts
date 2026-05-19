@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_PATHS } from "../constants/apiPaths";
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -21,12 +22,12 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/auth/')) {
+        if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes(API_PATHS.AUTH.PREFIX)) {
             originalRequest._retry = true;
 
             try {
                 const response = await axios.post(
-                    `${import.meta.env.VITE_API_BASE_URL}/auth/refresh-token`,
+                    `${import.meta.env.VITE_API_BASE_URL}${API_PATHS.AUTH.REFRESH_TOKEN}`,
                     {},
                     { withCredentials: true }
                 );

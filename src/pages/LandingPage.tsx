@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, BookOpen, TrendingUp, Users, Zap } from 'lucide-react';
 import api from '../api/axios';
 import Logo from '../components/Logo';
+import { API_PATHS } from '../constants/apiPaths';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -15,16 +16,14 @@ const LandingPage = () => {
         return;
       }
 
-      // If no token, try to refresh it (axios interceptor handles the logic)
       try {
-        const response = await api.post('/auth/refresh-token');
+        const response = await api.post(API_PATHS.AUTH.REFRESH_TOKEN);
         const { accessToken } = response.data;
         if (accessToken) {
           localStorage.setItem('accessToken', accessToken);
           navigate('/home');
         }
       } catch (error) {
-        // Not authenticated, stay on landing page
         console.log("No active session found");
       }
     };
@@ -76,16 +75,16 @@ const LandingPage = () => {
               Explore Community
             </button>
           </div>
-          
+
           <div className="mt-16 relative">
-             <div className="absolute inset-0 bg-indigo-600/5 blur-3xl rounded-full -z-10"></div>
-             <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-2xl">
-                <img 
-                  src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop" 
-                  alt="Dashboard Preview" 
-                  className="w-full h-auto object-cover"
-                />
-             </div>
+            <div className="absolute inset-0 bg-indigo-600/5 blur-3xl rounded-full -z-10"></div>
+            <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-2xl">
+              <img
+                src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop"
+                alt="Dashboard Preview"
+                className="w-full h-auto object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -97,7 +96,7 @@ const LandingPage = () => {
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Everything you need to thrive</h2>
             <p className="text-slate-600">Powerful tools for creators who want to make an impact.</p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { icon: BookOpen, title: "Rich Editor", description: "Write with a clean, distraction-free editor that supports markdown and media." },

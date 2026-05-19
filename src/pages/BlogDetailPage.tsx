@@ -11,15 +11,17 @@ import {
 import { getBlogById, toggleLike } from '../api/blogs';
 import Header from '../components/Header';
 
+
 const BlogDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   const [blog, setBlog] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const userJson = localStorage.getItem('user');
+  const userJson = localStorage.getItem("user");
   const currentUser = userJson ? JSON.parse(userJson) : null;
   const [error, setError] = useState<string | null>(null);
 
+  
   useEffect(() => {
     const fetchBlog = async () => {
       if (!id) return;

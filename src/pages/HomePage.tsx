@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Search, 
-  Plus, 
-  Image as ImageIcon, 
-  X, 
-  Loader2, 
+import {
+  Search,
+  Plus,
+  Image as ImageIcon,
+  X,
+  Loader2,
   BookOpen,
   RotateCw,
   Clock,
@@ -14,7 +14,7 @@ import {
 import { getBlogs, createBlog, uploadImage, toggleLike } from '../api/blogs';
 import Header from '../components/Header';
 import ImageCropper from '../components/ImageCropper';
-import { useBlogs } from '../api/BlogContext';
+import { useBlogs } from '../context/BlogContext';
 import { blogSchema } from '../validators/blog.validator';
 
 const HomePage = () => {
@@ -31,7 +31,7 @@ const HomePage = () => {
   const [newBlog, setNewBlog] = useState({ title: '', content: '', image: '', imagePublicId: '' });
   const [fieldErrors, setFieldErrors] = useState<{ title?: string; content?: string }>({});
   const [error, setError] = useState<string | null>(null);
-  
+
   // Cropper states
   const [tempImage, setTempImage] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
@@ -39,7 +39,7 @@ const HomePage = () => {
   const fetchBlogs = async (query?: string) => {
     // Only show full page loader if it's the very first load and no data exists
     if (isInitialLoad && blogs.length === 0) setIsLoading(true);
-    
+
     try {
       const data = await getBlogs(query);
       setBlogs(data);
@@ -63,7 +63,7 @@ const HomePage = () => {
       const result = await toggleLike(blogId);
       setBlogs(prev => prev.map(blog => {
         if (blog.id === blogId) {
-          const newLikes = result.liked 
+          const newLikes = result.liked
             ? [...(blog.likes || []), { userId: currentUser?.id, blogId }]
             : (blog.likes || []).filter((l: any) => l.userId !== currentUser?.id);
           return { ...blog, likeCount: result.likeCount, likes: newLikes };
@@ -77,7 +77,6 @@ const HomePage = () => {
 
   const isFirstRender = React.useRef(true);
 
-  // Consolidate initialization and search logic
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const searchQuery = params.get('search') || '';
@@ -95,8 +94,7 @@ const HomePage = () => {
 
     // Debounced fetch
     const timer = setTimeout(() => {
-      // Only fetch if it's the first render or if search actually changed
-      // We use isInitialLoad from context to determine if we need that first fetch
+
       fetchBlogs(search);
     }, isFirstRender.current ? 0 : 500); // No delay on first render
 
@@ -138,7 +136,7 @@ const HomePage = () => {
 
   const handleCreateBlog = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const result = blogSchema.safeParse(newBlog);
     if (!result.success) {
       const newErrors: { title?: string; content?: string } = {};
@@ -172,7 +170,7 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
-      <Header 
+      <Header
         onSearch={handleSearch}
         onCreateClick={() => setIsModalOpen(true)}
         searchValue={search}
@@ -181,13 +179,13 @@ const HomePage = () => {
 
       {/* Image Cropper Modal */}
       {showCropper && tempImage && (
-        <ImageCropper 
-          image={tempImage} 
-          onCropComplete={onCropComplete} 
+        <ImageCropper
+          image={tempImage}
+          onCropComplete={onCropComplete}
           onCancel={() => {
             setShowCropper(false);
             setTempImage(null);
-          }} 
+          }}
         />
       )}
 
@@ -209,16 +207,16 @@ const HomePage = () => {
         ) : blogs.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {blogs.map((blog) => (
-              <div 
-                key={blog.id} 
+              <div
+                key={blog.id}
                 onClick={() => navigate(`/blog/${blog.id}`)}
                 className="bg-white rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group cursor-pointer"
               >
                 <div className="aspect-video w-full overflow-hidden bg-slate-100 relative">
                   {blog.image ? (
-                    <img 
-                      src={blog.image} 
-                      alt={blog.title} 
+                    <img
+                      src={blog.image}
+                      alt={blog.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
@@ -248,13 +246,12 @@ const HomePage = () => {
                     <span className="text-[10px] font-medium text-slate-400 uppercase tracking-tighter">
                       {new Date(blog.createdAt).toLocaleDateString()}
                     </span>
-                    <button 
+                    <button
                       onClick={(e) => handleLike(e, blog.id)}
-                      className={`flex items-center gap-1.5 px-2 py-1 rounded-full transition-all ${
-                        blog.likes?.some((l: any) => l.userId === currentUser?.id)
-                        ? 'text-rose-600 bg-rose-50'
-                        : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'
-                      }`}
+                      className={`flex items-center gap-1.5 px-2 py-1 rounded-full transition-all ${blog.likes?.some((l: any) => l.userId === currentUser?.id)
+                          ? 'text-rose-600 bg-rose-50'
+                          : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'
+                        }`}
                     >
                       <Heart className={`w-3.5 h-3.5 ${blog.likes?.some((l: any) => l.userId === currentUser?.id) ? 'fill-current' : ''}`} />
                       <span className="text-xs font-bold">{blog.likeCount || 0}</span>
@@ -273,12 +270,12 @@ const HomePage = () => {
               {search ? `No results for "${search}"` : "No stories found"}
             </h3>
             <p className="text-slate-500 mb-6">
-              {search 
-                ? "Try adjusting your search to find what you're looking for." 
+              {search
+                ? "Try adjusting your search to find what you're looking for."
                 : "Be the first one to share a story with the world!"}
             </p>
             {!search && (
-              <button 
+              <button
                 onClick={() => setIsModalOpen(true)}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700 transition-all shadow-md"
               >
@@ -287,7 +284,7 @@ const HomePage = () => {
               </button>
             )}
             {search && (
-              <button 
+              <button
                 onClick={() => setSearch('')}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 text-slate-600 rounded-full font-semibold hover:bg-slate-200 transition-all"
               >
@@ -301,14 +298,14 @@ const HomePage = () => {
       {/* Create Blog Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div 
+          <div
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
             onClick={() => !isCreating && !isUploading && setIsModalOpen(false)}
           ></div>
           <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
               <h2 className="text-xl font-bold text-slate-900">Create New Story</h2>
-              <button 
+              <button
                 onClick={() => setIsModalOpen(false)}
                 className="p-2 hover:bg-slate-100 rounded-full transition-colors"
                 disabled={isCreating || isUploading}
@@ -316,7 +313,7 @@ const HomePage = () => {
                 <X className="w-5 h-5 text-slate-500" />
               </button>
             </div>
-            
+
             <form onSubmit={handleCreateBlog} className="p-6 space-y-5">
               {error && (
                 <div className="p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm font-medium">
@@ -331,13 +328,13 @@ const HomePage = () => {
                   className={`w-full px-4 py-3 bg-slate-50 border ${fieldErrors.title ? 'border-red-300 ring-red-100' : 'border-slate-200'} rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all`}
                   value={newBlog.title}
                   onChange={(e) => {
-                    setNewBlog({...newBlog, title: e.target.value});
-                    if (fieldErrors.title) setFieldErrors(prev => ({...prev, title: undefined}));
+                    setNewBlog({ ...newBlog, title: e.target.value });
+                    if (fieldErrors.title) setFieldErrors(prev => ({ ...prev, title: undefined }));
                   }}
                 />
                 {fieldErrors.title && <p className="mt-1 text-xs text-red-600 font-medium">{fieldErrors.title}</p>}
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">Content</label>
                 <textarea
@@ -346,37 +343,37 @@ const HomePage = () => {
                   className={`w-full px-4 py-3 bg-slate-50 border ${fieldErrors.content ? 'border-red-300 ring-red-100' : 'border-slate-200'} rounded-xl text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-none`}
                   value={newBlog.content}
                   onChange={(e) => {
-                    setNewBlog({...newBlog, content: e.target.value});
-                    if (fieldErrors.content) setFieldErrors(prev => ({...prev, content: undefined}));
+                    setNewBlog({ ...newBlog, content: e.target.value });
+                    if (fieldErrors.content) setFieldErrors(prev => ({ ...prev, content: undefined }));
                   }}
                 />
                 {fieldErrors.content && <p className="mt-1 text-xs text-red-600 font-medium">{fieldErrors.content}</p>}
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">Featured Image</label>
-                <input 
-                  type="file" 
+                <input
+                  type="file"
                   ref={fileInputRef}
-                  className="hidden" 
+                  className="hidden"
                   accept="image/*"
                   onChange={handleFileChange}
                 />
-                
+
                 {newBlog.image ? (
                   <div className="relative aspect-video rounded-xl overflow-hidden border border-slate-200 group">
                     <img src={newBlog.image} alt="Preview" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                      <button 
+                      <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         className="p-2 bg-white rounded-full text-slate-900 hover:scale-110 transition-transform"
                       >
                         <RotateCw className="w-5 h-5" />
                       </button>
-                      <button 
+                      <button
                         type="button"
-                        onClick={() => setNewBlog({...newBlog, image: '', imagePublicId: ''})}
+                        onClick={() => setNewBlog({ ...newBlog, image: '', imagePublicId: '' })}
                         className="p-2 bg-white rounded-full text-red-600 hover:scale-110 transition-transform"
                       >
                         <X className="w-5 h-5" />
@@ -403,7 +400,7 @@ const HomePage = () => {
                   </button>
                 )}
               </div>
-              
+
               <div className="pt-2">
                 <button
                   type="submit"
