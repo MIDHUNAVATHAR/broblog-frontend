@@ -1,8 +1,42 @@
-import React, { createContext, useContext, useState} from 'react';
+import React, { createContext, useContext, useState } from 'react';
+
+
+
+export interface Like {
+  userId: string;
+  blogId: string;
+}
+
+export interface Author {
+  email: string;
+}
+
+export interface Blog {
+  id: string;
+  title: string;
+  content: string;
+  
+  // Made optional with '?' so it doesn't crash if a blog has no image
+  image?: string; 
+  imagePublicId?: string;
+
+  authorId: string;
+  author?: Author;
+
+  // Added missing properties for your likes and reading time
+  likes?: Like[];
+  likeCount?: number;
+  readingTime?: string;
+
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ─── Context Implementation (Unchanged) ───────────────────────────────────────
 
 interface BlogContextType {
-  blogs: any[];
-  setBlogs: React.Dispatch<React.SetStateAction<any[]>>;
+  blogs: Blog[];
+  setBlogs: React.Dispatch<React.SetStateAction<Blog[]>>;
   isInitialLoad: boolean;
   setIsInitialLoad: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -10,7 +44,7 @@ interface BlogContextType {
 const BlogContext = createContext<BlogContextType | undefined>(undefined);
 
 export const BlogProvider = ({ children }: { children: React.ReactNode }) => {
-  const [blogs, setBlogs] = useState<any[]>([]);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   return (

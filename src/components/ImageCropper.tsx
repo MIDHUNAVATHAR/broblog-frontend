@@ -8,18 +8,31 @@ interface ImageCropperProps {
   onCancel: () => void;
 }
 
+interface Area {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+
 const ImageCropper: React.FC<ImageCropperProps> = ({ image, onCropComplete, onCancel }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
-  const onCropChange = (crop: any) => setCrop(crop);
+
+  const onCropChange = (crop: { x: number; y: number }) => { setCrop(crop) };
   const onZoomChange = (zoom: number) => setZoom(zoom);
 
-  const onCropCompleteCallback = useCallback((_croppedArea: any, croppedAreaPixels: any) => {
+
+  const onCropCompleteCallback = useCallback(
+  (_croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
+  },
+  []
+);
 
   const createImage = (url: string): Promise<HTMLImageElement> =>
     new Promise((resolve, reject) => {
@@ -32,7 +45,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ image, onCropComplete, onCa
 
   const getCroppedImg = async (
     imageSrc: string,
-    pixelCrop: any,
+    pixelCrop: Area,
     rotation = 0
   ): Promise<Blob> => {
     const image = await createImage(imageSrc);
@@ -88,6 +101,11 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ image, onCropComplete, onCa
 
   const handleDone = async () => {
     try {
+          
+       if (!croppedAreaPixels) {
+           return;
+       }
+
       const croppedImage = await getCroppedImg(
         image,
         croppedAreaPixels,
@@ -144,7 +162,9 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ image, onCropComplete, onCa
               max={3}
               step={0.1}
               aria-labelledby="Zoom"
-              onChange={(e: any) => setZoom(e.target.value)}
+             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setZoom(Number(e.target.value))
+             }
               className="flex-1 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
             />
             <ZoomIn className="w-5 h-5 text-slate-400" />
@@ -159,7 +179,9 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ image, onCropComplete, onCa
               max={360}
               step={1}
               aria-labelledby="Rotation"
-              onChange={(e: any) => setRotation(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                 setRotation(Number(e.target.value))
+              }
               className="flex-1 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
             />
             <span className="text-slate-400 text-sm font-medium w-8">{rotation}°</span>

@@ -53,9 +53,13 @@ const LoginPage = () => {
       localStorage.setItem('accessToken', response.accessToken);
 
       navigate('/home'); // Redirect to home after successful login
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Invalid email or password');
-    } finally {
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+        setError("Invalid email or password");
+    }
+}finally {
       setIsLoading(false);
     }
   };

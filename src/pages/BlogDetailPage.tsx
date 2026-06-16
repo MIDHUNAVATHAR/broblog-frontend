@@ -11,15 +11,40 @@ import {
 import { getBlogById, toggleLike } from '../api/blogs';
 import Header from '../components/Header';
 
+interface Like {
+  userId: string;
+  blogId: string;
+}
+
+interface Author {
+  email: string;
+}
+
+interface Blog {
+  id: string;
+  title: string;
+  content: string;
+  image?: string;
+  createdAt: string;
+  readingTime?: string;
+  likeCount: number;
+  likes: Like[];
+  authorId: string;
+  author?: Author;
+}
+
+interface CurrentUser {
+  id: string;
+  email: string;
+}
+
 
 const BlogDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate(); 
-  const [blog, setBlog] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [blog, setBlog] = useState<Blog | null>(null);  const [isLoading, setIsLoading] = useState(true);
   const userJson = localStorage.getItem("user");
-  const currentUser = userJson ? JSON.parse(userJson) : null;
-  const [error, setError] = useState<string | null>(null);
+  const currentUser: CurrentUser | null = userJson ? JSON.parse(userJson) : null;  const [error, setError] = useState<string | null>(null);
 
   
   useEffect(() => {
@@ -40,18 +65,33 @@ const BlogDetailPage = () => {
     fetchBlog();
   }, [id]);
 
-  const handleLike = async () => {
-    if (!blog) return;
-    try {
-      const result = await toggleLike(blog.id);
-      const newLikes = result.liked 
-        ? [...(blog.likes || []), { userId: currentUser?.id, blogId: blog.id }]
-        : (blog.likes || []).filter((l: any) => l.userId !== currentUser?.id);
-      setBlog({ ...blog, likeCount: result.likeCount, likes: newLikes });
-    } catch (error) {
-      console.error("Failed to toggle like", error);
-    }
-  };
+const handleLike = async () => {
+  if (!blog || !currentUser) return;
+
+  try {
+    const result = await toggleLike(blog.id);
+
+    const newLikes = result.liked
+      ? [
+          ...(blog.likes || []),
+          {
+            userId: currentUser.id,
+            blogId: blog.id,
+          },
+        ]
+      : (blog.likes || []).filter(
+          (l: Like) => l.userId !== currentUser.id
+        );
+
+    setBlog({
+      ...blog,
+      likeCount: result.likeCount,
+      likes: newLikes,
+    });
+  } catch (error) {
+    console.error("Failed to toggle like", error);
+  }
+};
 
   if (isLoading) {
     return (
@@ -107,12 +147,12 @@ const BlogDetailPage = () => {
           <button 
             onClick={handleLike}
             className={`flex items-center gap-2 px-6 py-3 rounded-full transition-all border shrink-0 h-fit ${
-              blog.likes?.some((l: any) => l.userId === currentUser?.id)
+             blog.likes?.some((l: Like) => l.userId === currentUser?.id)
               ? 'text-rose-600 bg-rose-50 border-rose-100 shadow-sm shadow-rose-100'
               : 'text-slate-500 bg-white border-slate-200 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-100'
             }`}
           >
-            <Heart className={`w-5 h-5 ${blog.likes?.some((l: any) => l.userId === currentUser?.id) ? 'fill-current' : ''}`} />
+            <Heart className={`w-5 h-5 ${blog.likes?.some((l: Like) => l.userId === currentUser?.id) ? 'fill-current' : ''}`} />
             <span className="font-bold text-lg">{blog.likeCount || 0}</span>
           </button>
         </div>

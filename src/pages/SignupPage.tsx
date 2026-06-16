@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import {  Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { signup } from "../api/auth";
 import Logo from '../components/Logo';
 import { signupSchema } from '../validators/auth.validator';
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -48,8 +56,9 @@ const SignupPage = () => {
     try {
       await signup(formData);
       navigate('/login', { state: { message: 'Account created successfully! Please sign in.' } });
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.response?.data?.message || 'Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
     }
