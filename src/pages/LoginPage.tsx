@@ -49,8 +49,9 @@ const LoginPage = () => {
     setError(null);
     try {
       const response = await login(formData);
-      // Store access token in local storage
+      // Store access token and user in local storage
       localStorage.setItem('accessToken', response.accessToken);
+      localStorage.setItem('user', JSON.stringify(response.user));
 
       navigate('/home'); // Redirect to home after successful login
     } catch (err: unknown) {

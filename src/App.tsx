@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
@@ -6,43 +6,61 @@ import HomePage from "./pages/HomePage";
 import BlogDetailPage from "./pages/BlogDetailPage";
 import MyPostsPage from "./pages/MyPostsPage";
 import { BlogProvider } from "./context/BlogContext";
-
-const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
-  const token = localStorage.getItem('accessToken');
-  return token ? <>{children}</> : <Navigate to="/login" />;
-};
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 
 const App = () => {
   return (
     <BlogProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/"
+            element={
+              <PublicRoute>
+                <LandingPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PublicRoute>
+                <SignupPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <LoginPage />
+              </PublicRoute>
+            }
+          />
 
           <Route
             path="/home"
             element={
-              <PrivateRoute>
+              <ProtectedRoute>
                 <HomePage />
-              </PrivateRoute>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/blog/:id"
             element={
-              <PrivateRoute>
+              <ProtectedRoute>
                 <BlogDetailPage />
-              </PrivateRoute>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/my-posts"
             element={
-              <PrivateRoute>
+              <ProtectedRoute>
                 <MyPostsPage />
-              </PrivateRoute>
+              </ProtectedRoute>
             }
           />
         </Routes>

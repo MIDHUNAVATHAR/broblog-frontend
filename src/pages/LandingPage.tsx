@@ -21,6 +21,20 @@ const LandingPage = () => {
         const { accessToken } = response.data;
         if (accessToken) {
           localStorage.setItem('accessToken', accessToken);
+          try {
+            const base64Url = accessToken.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(
+              window.atob(base64)
+                .split('')
+                .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                .join('')
+            );
+            const user = JSON.parse(jsonPayload);
+            localStorage.setItem('user', JSON.stringify({ id: user.id, email: user.email }));
+          } catch (e) {
+            console.error("Error decoding token in LandingPage checkAuth", e);
+          }
           navigate('/home');
         }
       } catch (error) {
