@@ -25,6 +25,28 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         return;
       }
 
+      // Check if token is still valid (not expired)
+      try {
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const jsonPayload = decodeURIComponent(
+          window.atob(base64)
+            .split("")
+            .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+            .join("")
+        );
+        const decoded = JSON.parse(jsonPayload);
+        if (decoded.exp && decoded.exp * 1000 > Date.now() + 10000) {
+          if (isMounted) {
+            setIsAuthenticated(true);
+            setLoading(false);
+          }
+          return;
+        }
+      } catch (e) {
+        console.error("Error decoding token pre-check in ProtectedRoute", e);
+      }
+
       try {
         const response = await axios.post(
           `${import.meta.env.VITE_API_BASE_URL}${API_PATHS.AUTH.REFRESH_TOKEN}`,
